@@ -163,7 +163,7 @@ def update_map(map_data, per_capita, sel_day, small_pop):
     fig.update_layout(
         hovermode='closest',
         mapbox=dict(
-            accesstoken='pk.eyJ1IjoiY2hrMjgxNyIsImEiOiJjazg0bzFpOTkxa3JqM2twZzF1bndjZTJiIn0.5ATp6O0t0VwjN0CiTVyqBw',
+            accesstoken='pk.eyJ1IjoiYWdhcndhbHYiLCJhIjoiY2s5Nm80M2VkMDRqNTNmbWdzZHNlcmV4byJ9.NvNqJjQiQoJ-uOg0V-LMZg',
             center={'lat': 36, 'lon': -5.4},
             zoom=1.5,
         ),
