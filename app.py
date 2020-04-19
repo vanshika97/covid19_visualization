@@ -10,7 +10,10 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = [dbc.themes.BOOTSTRAP,
+'https://use.fontawesome.com/releases/v5.11.2/css/all.css',
+{'href': 'https://fonts.googleapis.com/icon?family=Material+Icons',
+'rel': 'stylesheet'}]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -43,27 +46,31 @@ map_data_options = [{'label': 'Confirmed Cases', 'value': 'confirmed_cases'},
 
 map_section = dbc.Container([
     dbc.Row([
-        html.Div(id='output-clientside', style={'height': '5vh'}),
+        html.Div(
+        className="app-header",
+        children=[
+            html.Div('Coronavirus outbreak in the world', className="app-header--title")
+        ]),
         dbc.Col(dcc.Graph(id='map_plot', config=config, style={'height': '78vh'}), width=12),
     ]),
 
     dbc.Row(
         dbc.Col(
             dbc.Select(id='map_data', options=map_data_options, className='position-relative',
-                       style={'left': '3vw', 'top': '-75vh', 'width': '240px'}, value='confirmed_cases')
+                       style={'left': '3vw', 'top': '-75vh', 'width': '240px', 'font_size': '36px', 'color': '#9400D3'}, value='confirmed_cases')
             , className='col-12')
         , id='timeline', style={'height': '0px'}),
 
     dbc.Row([
         dbc.Col([
-            dbc.Checklist(options=[{"label": "Per mio Capita", "value": True, 'disabled': False}], value=[],
+            dbc.Checklist(options=[{"label": "Per (million) Capita", "value": True, 'disabled': False}], value=[],
                           id="per_capita", switch=True, className='position-relative',
-                          style={'left': '3vw', 'top': '-70vh', 'color': '#508caf', 'width': '240px'}),
+                          style={'padding-top': '20px', 'left': '3vw', 'top': '-70vh', 'color': '#9400D3', 'width': '240px', 'font_size': '36px'}),
         ], className='col-12'),
         dbc.Col([
             dbc.Checklist(options=[{"label": "Exclude Population < 300K", "value": True, 'disabled': False}], value=[],
                           id="small_pop", switch=True, className='position-relative',
-                          style={'left': '3vw', 'top': '-68vh', 'color': '#508caf', 'width': '240px'}),
+                          style={'left': '3vw', 'top': '-68vh', 'color': '#9400D3', 'width': '240px', 'font_size': '36px'}),
         ], className='col-12'),
     ], style={'height': '0px'}),
 
@@ -76,7 +83,7 @@ map_section = dbc.Container([
     dbc.Card([
         dbc.CardHeader(
             html.H2("", id='stat_card_header', className='m-0',
-                    style={'color': '#508caf'})
+                    style={'color': 'purple'})
             , style={'backgroundColor': 'rgba(255,255,255,0.5)'}),
         dbc.CardBody([
             html.H4("", id='lbl_cases', style={'color': '#666666'}),
@@ -84,7 +91,7 @@ map_section = dbc.Container([
             html.H4('', id='lbl_deaths', style={'color': '#666666'}),
             html.Pre('', id='lbl_deaths_rate', className='m-0', style={'color': '#666666'}),
         ], style={'backgroundColor': 'rgba(255,255,255,0.5)', 'padding': '10px 5px 10px 20px'})
-    ], style={'backgroundColor': 'rgba(255,255,255,0.5)', 'left': '3vw', 'top': '-25vh', 'width': '242px'}),
+    ], style={'backgroundColor': 'rgba(255,255,255,0.5)', 'left': '3vw', 'top': '-30vh', 'width': '242px'}),
 
 ], fluid=True, id='map_section', style={'height': '90vh'})
 
@@ -93,7 +100,7 @@ map_section = dbc.Container([
               [Input('map_data', 'value')])
 def upd_switch_label(value):
     if value == 'confirmed_cases':
-        return [{"label": "Per mio Capita", "value": True, 'disabled': False}]
+        return [{"label": "Per (million) Capita", "value": True, 'disabled': False}]
     else:
         return [{"label": "As Rate on Cases", "value": True, 'disabled': False}]
 
@@ -103,8 +110,7 @@ def human_format(num):
     while abs(num) >= 1000:
         magnitude += 1
         num /= 1000.0
-    # add more suffixes if you need them
-    return '%.1f%s' % (num, ['', 'K', 'M', 'G', 'T', 'P'][magnitude])
+    return '%.1f%s' % (num, ['', 'K', 'M'][magnitude])
 
 @app.callback([Output('map_plot', 'figure'), Output('stat_card_header', 'children'),
                Output('lbl_cases', 'children'), Output('lbl_cases_per_capita', 'children'),
@@ -139,7 +145,7 @@ def update_map(map_data, per_capita, sel_day, small_pop):
     customdata = dff.loc[:, ['country_area', 'population', map_data, data_per_capita, 'confirmed_cases']].to_numpy()
 
     if map_data == 'confirmed_cases':
-        m_color = '#508caf'
+        m_color = 'purple'
     elif map_data == 'deaths':
         m_color = 'red'
     elif map_data == 'recovered':
@@ -195,25 +201,24 @@ def update_map(map_data, per_capita, sel_day, small_pop):
 
     cases_label = ["Cases : " + human_format(total_cases_sel_date),
                    dbc.Badge(str('{:+.0%}'.format(cases_variance)), className="mr-3 position-relative float-right", id='badge_case',
-                             style={'backgroundColor': '#508caf', 'width':'50px'}),
+                             style={'backgroundColor': '#9400D3', 'width':'50px'}),
                    dbc.Tooltip("Variance over previous day", target="badge_case")
                    ]
 
-    lbl_cases_per_capita = "per mio capita : " + human_format(cases_per_exposure)
+    lbl_cases_per_capita = "per (million) capita: " + human_format(cases_per_exposure)
 
     lbl_deaths = ["Deaths : " + human_format(total_deaths_sel_date),
                   dbc.Badge(str('{:+.0%}'.format(death_variance)), className="mr-3 position-relative float-right", id='badge_death',
-                            style={'backgroundColor': '#508caf', 'width':'50px'}),
+                            style={'backgroundColor': '#9400D3', 'width':'50px'}),
                   dbc.Tooltip("Variance over previous day", target="badge_death")
                   ]
 
-    lbl_deaths_rate = 'as % cases : ' + str('{:.1%}'.format(death_rate))
+    lbl_deaths_rate = 'as % cases: ' + str('{:.1%}'.format(death_rate))
 
     return fig, selected_date, cases_label, lbl_cases_per_capita, lbl_deaths, lbl_deaths_rate
 
 app.layout = html.Div(children=[
-    map_section,
-    # footer_section
+    map_section
     ]
 )
 if __name__ == '__main__':
