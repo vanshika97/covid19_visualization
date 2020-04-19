@@ -4,6 +4,7 @@ import pathlib
 import numpy as np
 import pandas as pd
 from datetime import timedelta
+from helpers import human_format
 import plotly.graph_objects as go
 import dash_core_components as dcc
 import dash_html_components as html
@@ -105,13 +106,6 @@ def upd_switch_label(value):
         return [{"label": "As Rate on Cases", "value": True, 'disabled': False}]
 
 
-def human_format(num):
-    magnitude = 0
-    while abs(num) >= 1000:
-        magnitude += 1
-        num /= 1000.0
-    return '%.1f%s' % (num, ['', 'K', 'M'][magnitude])
-
 @app.callback([Output('map_plot', 'figure'), Output('stat_card_header', 'children'),
                Output('lbl_cases', 'children'), Output('lbl_cases_per_capita', 'children'),
                Output('lbl_deaths', 'children'), Output('lbl_deaths_rate', 'children')],
@@ -164,8 +158,8 @@ def update_map(map_data, per_capita, sel_day, small_pop):
         hovermode='closest',
         mapbox=dict(
             accesstoken='pk.eyJ1IjoiYWdhcndhbHYiLCJhIjoiY2s5Nm80M2VkMDRqNTNmbWdzZHNlcmV4byJ9.NvNqJjQiQoJ-uOg0V-LMZg',
-            center={'lat': 36, 'lon': -5.4},
-            zoom=1.5,
+            center={'lat': 30, 'lon': -3.4},
+            zoom=1.7,
         ),
         margin={"r": 0, "t": 0, "l": 0, "b": 0},
         autosize=True,
