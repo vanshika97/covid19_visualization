@@ -128,7 +128,7 @@ def update_map(map_data, per_capita, sel_day, small_pop):
     if map_data == 'confirmed_cases':
         ht = '<b>%{customdata[0]}</b><br>' \
              + 'Cases : %{customdata[2]:,f}<br>' \
-             + 'Population : %{customdata[1]:,.1f} mio<br>' \
+             + 'Population : %{customdata[1]:,.1f} million<br>' \
              + 'Per capita : %{customdata[3]:,.0f}<extra></extra>'
     else:
         ht = '<b>%{customdata[0]}</b><br>' \
